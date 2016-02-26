@@ -3,10 +3,9 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/monochromegane/dsn"
 )
 
@@ -28,7 +27,7 @@ type JobCountPlugin struct {
 	Tempfile string
 }
 
-func (j JobCountPlugin) FetchMetrics() (map[string]float64, error) {
+func (j JobCountPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	name, dsn, err := dsn.FromRailsConfig(dbconf, env)
 	if err != nil {
@@ -51,7 +50,7 @@ func (j JobCountPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
-	return map[string]float64{
+	return map[string]interface{}{
 		"count": count,
 		"error": errCount,
 	}, nil
@@ -69,10 +68,5 @@ func init() {
 
 func main() {
 	helper := mp.NewMackerelPlugin(JobCountPlugin{})
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+    helper.Run()
 }
