@@ -68,5 +68,5 @@ func init() {
 
 func main() {
 	helper := mp.NewMackerelPlugin(JobCountPlugin{})
-    helper.Run()
+	helper.Run()
 }
